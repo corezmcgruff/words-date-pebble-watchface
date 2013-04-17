@@ -4,7 +4,7 @@
 #include "pebble_app.h"
 #include "string.h"
 #define BUFFER_SIZE 43
-#define DATE_FORMAT "%b %e"
+#define DATE_FORMAT " %e"
 
 void fuzzy_minutes_to_words(PblTm *t, char* words);
 void fuzzy_hours_to_words(PblTm *t, char* words);

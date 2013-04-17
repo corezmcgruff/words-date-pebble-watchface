@@ -39,6 +39,20 @@ static const char* const TENS[] = {
   "ninety"
 };
 
+static const char* const MONTHS[] = {
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec"
+};
+
 static const char* STR_OH_CLOCK = "o'clock";
 static const char* STR_NOON = "noon";
 static const char* STR_MID = "mid";
@@ -142,5 +156,14 @@ void fuzzy_hours_to_words(PblTm *t, char* words) {
 }
 
 void fuzzy_dates_to_words(PblTm *t, char* words) {
-  string_format_time(words, 7, DATE_FORMAT, t);
+  int fuzzy_months = t->tm_mon;
+
+  size_t remaining = BUFFER_SIZE;
+  memset(words, 0, BUFFER_SIZE);
+
+  remaining -= append_string(words, remaining, MONTHS[fuzzy_months]);
+
+  char day[2];
+  string_format_time(day, 7, DATE_FORMAT, t);
+  remaining -= append_string(words, remaining, day);
 }
