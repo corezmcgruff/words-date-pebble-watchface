@@ -26,11 +26,7 @@ static struct CommonWordsData layers[NUM_LAYERS] =
 {{ .update = &fuzzy_sminutes_to_words },
  { .update = &fuzzy_minutes_to_words },
  { .update = &fuzzy_hours_to_words },
- { .update = &fuzzy_dates_to_words}};
-
-static GFont light;
-static GFont bold;
-static GFont small;
+ { .update = &fuzzy_dates_to_words, .buffer = "Xxx 00" }};
 
 void slide_out(PropertyAnimation *animation, CommonWordsData *layer) {
   GRect from_frame = layer_get_frame(&layer->label.layer);
@@ -79,8 +75,8 @@ void update_layer(CommonWordsData *layer) {
 static void handle_minute_tick(AppContextRef app_ctx, PebbleTickEvent* e) {
   PblTm *t = e->tick_time;
   if((e->units_changed & MINUTE_UNIT) == MINUTE_UNIT) {
-    if (!(t->tm_min == 14 || t->tm_min == 17 || t->tm_min == 18
-          || t->tm_min == 19)) {
+    if ((17 > t->tm_min || t->tm_min > 19)
+          && (11 > t->tm_min || t->tm_min > 13)) {
       update_layer(&layers[0]);
     }
     if (t->tm_min % 10 == 0 || (t->tm_min > 10 && t->tm_min < 20)
@@ -113,23 +109,22 @@ void handle_init(AppContextRef ctx) {
   window_stack_push(&window, animated);
   window_set_background_color(&window, GColorBlack);
   resource_init_current_app(&APP_RESOURCES);
-  light = fonts_load_custom_font(resource_get_handle(
-                      RESOURCE_ID_FONT_ROBOTO_LIGHT_30));
-  bold = fonts_load_custom_font(resource_get_handle(
-                      RESOURCE_ID_FONT_ROBOTO_BOLD_SUBSET_40));
-  small = fonts_load_custom_font(resource_get_handle(
-                      RESOURCE_ID_FONT_ROBOTO_CONDENSED_21));
+
 // single digits
-  init_layer(&layers[0], GRect(0, 81, window.layer.frame.size.w, 35), light);
+  init_layer(&layers[0],GRect(0, 76, window.layer.frame.size.w, 50),
+                    fonts_get_system_font(FONT_KEY_GOTHAM_42_LIGHT));
 
 // 00 minutes
-  init_layer(&layers[1], GRect(0, 46, window.layer.frame.size.w, 34), light);
+  init_layer(&layers[1], GRect(0, 38, window.layer.frame.size.w, 50),
+                    fonts_get_system_font(FONT_KEY_GOTHAM_42_LIGHT));
 
 //hours
-  init_layer(&layers[2], GRect(0, 0, window.layer.frame.size.w, 45), bold);
+  init_layer(&layers[2], GRect(0, 0, window.layer.frame.size.w, 50),
+                    fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
 
 //Date
-  init_layer(&layers[3], GRect(0, 120, window.layer.frame.size.w, 48), small);
+  init_layer(&layers[3], GRect(0, 114, window.layer.frame.size.w, 50),
+                    fonts_get_system_font(FONT_KEY_GOTHAM_42_LIGHT));
 
 //show your face
   PblTm t;
@@ -143,16 +138,10 @@ void handle_init(AppContextRef ctx) {
   }
 }
 
-void handle_deinit(AppContextRef ctx) {
-  fonts_unload_custom_font(light);
-  fonts_unload_custom_font(bold);
-  fonts_unload_custom_font(small);
-}
-
 void pbl_main(void *params) {
  PebbleAppHandlers handlers = {
     .init_handler = &handle_init,
-    .deinit_handler = &handle_deinit,
+
     .tick_info = {
       .tick_handler = &handle_minute_tick,
       .tick_units = MINUTE_UNIT
@@ -161,5 +150,3 @@ void pbl_main(void *params) {
   };
   app_event_loop(params, &handlers);
 }
-
-
