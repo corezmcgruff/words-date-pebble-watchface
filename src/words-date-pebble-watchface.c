@@ -12,7 +12,7 @@ PBL_APP_INFO(MY_UUID,
              APP_INFO_WATCH_FACE);
 
 Window window;
-TextLayer text_date_layer;
+Layer line_layer;
 
 typedef struct CommonWordsData {
   TextLayer label;
@@ -27,6 +27,18 @@ static struct CommonWordsData layers[NUM_LAYERS] =
  { .update = &fuzzy_minutes_to_words },
  { .update = &fuzzy_hours_to_words },
  { .update = &fuzzy_dates_to_words, .buffer = "Xxx 00" }};
+
+void line_layer_update_callback(Layer *me, GContext* ctx) {
+  (void)me;
+
+  graphics_context_set_stroke_color(ctx, GColorWhite);
+
+  graphics_draw_line(ctx, GPoint(0, 126),
+                      GPoint(window.layer.frame.size.w, 126));
+  graphics_draw_line(ctx, GPoint(0, 127),
+                      GPoint(window.layer.frame.size.w, 127));
+
+}
 
 void slide_out(PropertyAnimation *animation, CommonWordsData *layer) {
   GRect from_frame = layer_get_frame(&layer->label.layer);
@@ -105,7 +117,7 @@ void handle_init(AppContextRef ctx) {
   (void)ctx;
 
   window_init(&window, "Words + Date");
-  const bool animated = true;
+  const bool animated = false;
   window_stack_push(&window, animated);
   window_set_background_color(&window, GColorBlack);
   resource_init_current_app(&APP_RESOURCES);
@@ -123,12 +135,16 @@ void handle_init(AppContextRef ctx) {
                     fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
 
 //Date
-  init_layer(&layers[3], GRect(0, 114, window.layer.frame.size.w, 50),
-                    fonts_get_system_font(FONT_KEY_GOTHAM_42_LIGHT));
+  init_layer(&layers[3], GRect(0, 128, window.layer.frame.size.w, 30),
+                    fonts_get_system_font(FONT_KEY_GOTHIC_28));
 
 //show your face
   PblTm t;
   get_time(&t);
+
+  layer_init(&line_layer, window.layer.frame);
+  line_layer.update_proc = &line_layer_update_callback;
+  layer_add_child(&window.layer, &line_layer);
 
   for (int i = 0; i < NUM_LAYERS; ++i)
   {
