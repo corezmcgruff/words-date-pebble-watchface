@@ -43,7 +43,7 @@ static const char* STR_OH_CLOCK = "o'clock";
 static const char* STR_NOON = "noon";
 static const char* STR_MID = "mid";
 static const char* STR_NIGHT = "night";
-static const char* STR_OH = "oh";
+static const char* STR_OH = "o'";
 static const char* STR_TEEN = "teen";
 
 static size_t append_number(char* words, int num) {
