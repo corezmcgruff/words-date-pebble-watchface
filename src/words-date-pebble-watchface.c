@@ -5,6 +5,13 @@
 #define TIME_SLOT_ANIMATION_DURATION 700
 #define NUM_LAYERS 4
 
+enum layer_names {
+  MINUTES,
+  TENS,
+  HOURS,
+  DATE
+};
+
 PBL_APP_INFO(MY_UUID,
              "Words + Date", "Daniel Hertz + James Hrisho",
              1, 0, /* App version */
@@ -81,19 +88,19 @@ static void handle_minute_tick(AppContextRef app_ctx, PebbleTickEvent* e) {
   if((e->units_changed & MINUTE_UNIT) == MINUTE_UNIT) {
     if ((17 > t->tm_min || t->tm_min > 19)
           && (11 > t->tm_min || t->tm_min > 13)) {
-      update_layer(&layers[0]);
+      update_layer(&layers[MINUTES]);
     }
     if (t->tm_min % 10 == 0 || (t->tm_min > 10 && t->tm_min < 20)
           || t->tm_min == 1) {
-      update_layer(&layers[1]);
+      update_layer(&layers[TENS]);
     }
   }
   if ((e->units_changed & HOUR_UNIT) == HOUR_UNIT ||
-        ((t->tm_hour == 00 || t->tm_hour == 12) && t->tm_min == 1)) {
-    update_layer(&layers[2]);
+        ((t->tm_hour == 00 || t->tm_hour == 12) && t->tm_min == 01)) {
+    update_layer(&layers[HOURS]);
   }
   if ((e->units_changed & DAY_UNIT) == DAY_UNIT) {
-    update_layer(&layers[3]);
+    update_layer(&layers[DATE]);
   }
 }
 
@@ -120,16 +127,16 @@ void handle_init(AppContextRef ctx) {
   small = fonts_load_custom_font(resource_get_handle(
                       RESOURCE_ID_FONT_ROBOTO_CONDENSED_21));
 // single digits
-  init_layer(&layers[0], GRect(0, 81, window.layer.frame.size.w, 35), light);
+  init_layer(&layers[MINUTES], GRect(0, 81, window.layer.frame.size.w, 35), light);
 
 // 00 minutes
-  init_layer(&layers[1], GRect(0, 46, window.layer.frame.size.w, 34), light);
+  init_layer(&layers[TENS], GRect(0, 46, window.layer.frame.size.w, 34), light);
 
 //hours
-  init_layer(&layers[2], GRect(0, 0, window.layer.frame.size.w, 45), bold);
+  init_layer(&layers[HOURS], GRect(0, 0, window.layer.frame.size.w, 45), bold);
 
 //Date
-  init_layer(&layers[3], GRect(0, 120, window.layer.frame.size.w, 48), small);
+  init_layer(&layers[DATE], GRect(0, 120, window.layer.frame.size.w, 48), small);
 
 //show your face
   PblTm t;
