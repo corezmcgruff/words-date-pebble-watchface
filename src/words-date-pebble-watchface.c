@@ -103,7 +103,7 @@ static void handle_minute_tick(AppContextRef app_ctx, PebbleTickEvent* e) {
 void init_layer(CommonWordsData *layer, GRect rect, GFont font) {
   text_layer_init(&layer->label, rect);
   text_layer_set_background_color(&layer->label, GColorClear);
-  text_layer_set_text_color(&layer->label, GColorWhite);
+  text_layer_set_text_color(&layer->label, GColorBlack);
   text_layer_set_font(&layer->label, font);
   layer_add_child(&window.layer, &layer->label.layer);
 }
@@ -114,7 +114,7 @@ void handle_init(AppContextRef ctx) {
   window_init(&window, "Words + Date");
   const bool animated = true;
   window_stack_push(&window, animated);
-  window_set_background_color(&window, GColorBlack);
+  window_set_background_color(&window, GColorWhite);
   resource_init_current_app(&APP_RESOURCES);
 
 // single digits
