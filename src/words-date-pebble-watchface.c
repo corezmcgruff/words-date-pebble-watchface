@@ -15,7 +15,7 @@ enum layer_names {
 PBL_APP_INFO(MY_UUID,
              "Words + Date", "Daniel Hertz + James Hrisho",
              1, 0, /* App version */
-             RESOURCE_ID_IMAGE_MENU_ICON,
+             DEFAULT_MENU_ICON,
              APP_INFO_WATCH_FACE);
 
 Window window;
